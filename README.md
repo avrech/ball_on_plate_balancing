@@ -1,5 +1,5 @@
 # Ball on Plate Balancing
-![Alt text](images/the-system.png?raw=true "The Ball on Plate System")
+![Alt text](images/the-system.png)
 In this project we implement a digital PID controller for ball on plate balancing.  
 A link to the project video:  
 https://www.facebook.com/kohaik/videos/10212951342449166/?t=0
@@ -37,6 +37,28 @@ The PID controller by itself is enough robust to balnace the ball, had its input
 Unfortunately, it is not the case.  
 
 A typical measurment of the touchpad looks like this:
+![Alt text](images/noisy-measurment.png?raw=true "A Noisy Position Signal vs. Time")
+
+In order to reduce this pysical noise we do the following steps:  
+1. Reduce the noise in its pysical source, as much as possible.   
+2. Filter the majority of outliers by thresholding.  
+3. Smoothen the "almost clean" signal using standard filters (e.g IIR/FIR).    
+
+So we first double the voltage settling time of the touchpad. 
+We look at the resulting signal, and see that there is still a considerable mass of outliers. 
+The derivative of the position looks like this:  
+![Alt text](images/x-derivative.png?raw=true,center=true "A Noisy Position Signal vs. Time")  
+No LPF can deal with such garbage, but a simple thresolding can do it.  
+We compute the distance between consequent samples, and if it is two large we sample again.  
+This trick almost eliminated the noise.  
+![Alt text](images/after-resampling.png?raw=true,center=true "A Noisy Position Signal vs. Time")  
+
+The rest of the work can be done by a standard butterworth filter.    
+![Alt text](images/after-butterworth.png?raw=true,center=true "A Noisy Position Signal vs. Time")  
+
+
+Second, 
+
 ![Alt text](images/noisy-measurment.png?raw=true "A Noisy Position Signal vs. Time")
 
 
