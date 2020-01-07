@@ -1,5 +1,10 @@
 # Ball on Plate Balancing
+![Alt text](images/the-system.png?raw=true "The Ball on Plate System")
 In this project we implement a digital PID controller for ball on plate balancing.  
+A link to the project video:  
+https://www.facebook.com/kohaik/videos/10212951342449166/?t=0
+
+
 The system consists of:  
 1. Arduino Nano board equipped with ATmega328 microprocessor  
 2. Stewart Platform  
@@ -32,7 +37,7 @@ The PID controller by itself is enough robust to balnace the ball, had its input
 Unfortunately, it is not the case.  
 
 A typical measurment of the touchpad looks like this:
-
+![Alt text](images/noisy-measurment.png?raw=true "A Noisy Position Signal vs. Time")
 
 
 
