@@ -13,7 +13,8 @@ The system consists of:
 4. Touchpad  
 5. 5V power supply
 
-
+# The Control Loop
+![Alt text](images/close-loop-control.png)    
 The ball position is measured by the touchpad, and translated to (x,y) coordinates.
 Then, the PID controller computes the desired palte angles (roll, pitch) 
 that will bring the ball to the origin.
@@ -49,7 +50,7 @@ So we first double the voltage settling time of the touchpad.
 We look at the resulting signal, and see that there is still a considerable mass of outliers. 
 The derivative of the position looks like this:  
 ![Alt text](images/x-derivative.png?raw=true,center=true "A Noisy Position Signal vs. Time")  
-No LPF can deal with such garbage, but a simple thresolding can do it.  
+No LPF can deal with such garbage, but a simple thresolding can.  
 We compute the distance between consequent samples, and if it is two large we sample again.  
 This trick almost eliminated the noise.  
 ![Alt text](images/after-resampling.png?raw=true,center=true "A Noisy Position Signal vs. Time")  
