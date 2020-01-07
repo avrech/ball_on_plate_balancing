@@ -1,5 +1,6 @@
 # Ball on Plate Balancing
-![Alt text](images/the-system.png)
+![Alt text](images/the-system.png)  
+
 In this project we implement a digital PID controller for ball on plate balancing.  
 A link to the project video:  
 https://www.facebook.com/kohaik/videos/10212951342449166/?t=0
