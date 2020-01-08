@@ -6,45 +6,36 @@ The work done by [Daniela Ben-David](https://www.linkedin.com/in/daniela-ben-dav
 A link to the project page on facebook:  
 https://www.facebook.com/kohaik/videos/10212951342449166/?t=0
 
-
+## Hardware
 The system consists of:  
 1. Arduino Nano board equipped with ATmega328 microprocessor  
 2. Stewart Platform  
-3. 6 Servo motors feeded by external 5V power supply
+3. 6 TowerPro MG996R Servo motors feeded by external 5V power supply
 4. Touchpad  
 
 
-# The Control Loop
+## The Control Loop
 ![Alt text](images/close-loop-control.png)    
 The ball position is measured by the touchpad, and translated to (x,y) coordinates.
-Then, the PID controller computes the desired plate angles (roll, pitch) 
-that will bring the ball to the origin.
-These angles are translated to the desired motors' angles, (ideally) using the inverse kinematics 
+Then, the PID controller computes the desired plate angles (roll, pitch) which will bring the ball to the origin.
+These angles are translated to the desired motor angles, (ideally in a closed form) using the inverse kinematics 
 of the stewart platform. 
-The Arduino gives the angle commands to the motors, and the ball moves to the next position. 
+The Arduino controller set the new motor angles, and the ball moves to its next position. 
 The process repeats 50 times per second, until the ball arrives at the target. 
 
-# Stewart Platform & Servo Motors Mathematics  
-https://web.archive.org/web/20130506134518/http://www.wokinghamu3a.org.uk/Maths%20of%20the%20Stewart%20Platform%20v5.pdf
-
-# Ball on Plate Kinematics  
-The ball on plate system can be decomposed into two orthogonal ball on beam systems.  
-The kinematic equations as well as the transfer function can be found at  
-http://ctms.engin.umich.edu/CTMS/index.php?example=BallBeam&section=SystemModeling  
-
-
-# Tricks to make things working  
+## Tricks to make things working  
+### Dealing with non-ideal sensors
 The main difficult in developing "real" systems is that things do not work ideally.   
 In our case, the "ball on plate" problem turned out to be "extreme noisy sensors" problem.   
-The PID controller by itself is enough robust to balnace the ball, had its input be a clear signal.   
+The PID controller by itself is robust enough to balance the ball, had its input be a clear signal.   
 Unfortunately, it is not the case.  
 
-In order to reduce this pysical noise we do the following steps:  
+In order to reduce the noise effect we take the following steps:  
 1. Reduce the noise in its pysical source as much as possible.   
 2. Filter the majority of outliers by thresholding.  
 3. Smoothen the "almost clean" signal using standard filters (e.g IIR).    
 
-So we first double the voltage settling time of the touchpad.  
+First we double the voltage settling time of the touchpad.  
 We look at the resulting signal, and see that there is still a considerable mass of outliers:  
 ![Alt text](images/noisy-measurment.png?raw=true "A Noisy Position Signal vs. Time")  
 
@@ -59,11 +50,17 @@ The trick here is a simple re-sampling. We compute the distance between conseque
 The rest of the work can be done by a standard butterworth filter.    
 ![Alt text](images/after-butterworth.png?raw=true,center=true "A Noisy Position Signal vs. Time")  
 
-# Dealing with numerical instabilities
-The inverse kinematics of the stewart platform might cause numerical issues.  
-The instability comes from divisions by small numbers.  
-Following https://github.com/ThomasKNR/RotaryStewartPlatform/blob/master/src_arduino_code/platform.ino  
-we fix this issue as follows:  
-We compute the Steart platform leg lengths like they where telescopic legs.  
-Then we use binary search over the motor angles, and minimize the error between the desired leg length, and the actual distance between the motor's joint, and the plate joint.  
+### Dealing with numerical instabilities
+The inverse kinematics of the stewart platform is subject to numerical issues (e.g dividing by small numbers). 
+Following [this](https://github.com/ThomasKNR/RotaryStewartPlatform/blob/master/src_arduino_code/platform.ino) we compute the motor angles using binary search:  
+We compute the Stewart platform leg lengths like they where telescopic legs.  
+Then, for each motor, we binary-search for the optimal angle, which minimizes the error between the desired leg length, and the actual distance between the motor's joint and the plate joint, had we set the particular angle.  
 
+## Reference
+### Stewart Platform & Servo Motors Mathematics  
+https://web.archive.org/web/20130506134518/http://www.wokinghamu3a.org.uk/Maths%20of%20the%20Stewart%20Platform%20v5.pdf
+
+### Ball on Plate Kinematics  
+The ball on plate system can be decomposed into two orthogonal ball on beam systems.  
+The kinematic equations as well as the transfer function can be found at  
+http://ctms.engin.umich.edu/CTMS/index.php?example=BallBeam&section=SystemModeling  
