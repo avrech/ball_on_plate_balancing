@@ -1,6 +1,6 @@
 # Ball on Plate Balancing
 ![Alt text](images/the-system.png)   
-![Output sample](https://github.com/avrech/ball_on_plate_balancing/blob/master/bop.gif)
+![Output sample](https://github.com/avrech/ball_on_plate_balancing/blob/master/images/ezgif.com-video-to-gif.gif)
 
 In this project we have implemented a digital PID controller for ball on plate balancing.  
 A link to the project video:  
