@@ -1,9 +1,9 @@
 # Ball on Plate Balancing
-![Alt text](images/the-system.png)   
 ![Output sample](https://github.com/avrech/ball_on_plate_balancing/blob/master/images/ezgif.com-video-to-gif.gif)
 
-In this project we have implemented a digital PID controller for ball on plate balancing.  
-A link to the project video:  
+In this project we implemented a digital PID controller for ball on plate balancing.  
+The work done by [Daniela Ben-David](https://www.linkedin.com/in/daniela-ben-david-9852b6164/) and [Avrech Ben-David](https://www.linkedin.com/in/avrech-ben-david-948022117/) in the CRML Lab, Technion, under the supervision of Dr. Ilan Rusnak.  
+A link to the project page on facebook:  
 https://www.facebook.com/kohaik/videos/10212951342449166/?t=0
 
 
