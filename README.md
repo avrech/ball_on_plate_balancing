@@ -1,7 +1,7 @@
 # Ball on Plate Balancing
 ![Alt text](images/the-system.png)  
 
-In this project we implement a digital PID controller for ball on plate balancing.  
+In this project we have implemented a digital PID controller for ball on plate balancing.  
 A link to the project video:  
 https://www.facebook.com/kohaik/videos/10212951342449166/?t=0
 
@@ -9,16 +9,16 @@ https://www.facebook.com/kohaik/videos/10212951342449166/?t=0
 The system consists of:  
 1. Arduino Nano board equipped with ATmega328 microprocessor  
 2. Stewart Platform  
-3. 6 Servo motors 
+3. 6 Servo motors feeded by external 5V power supply
 4. Touchpad  
-5. 5V power supply
+
 
 # The Control Loop
 ![Alt text](images/close-loop-control.png)    
 The ball position is measured by the touchpad, and translated to (x,y) coordinates.
-Then, the PID controller computes the desired palte angles (roll, pitch) 
+Then, the PID controller computes the desired plate angles (roll, pitch) 
 that will bring the ball to the origin.
-These angles are translated to the desired motors' angles, using the inverse kinematics 
+These angles are translated to the desired motors' angles, (ideally) using the inverse kinematics 
 of the stewart platform. 
 The Arduino gives the angle commands to the motors, and the ball moves to the next position. 
 The process repeats 50 times per second, until the ball arrives at the target. 
@@ -38,30 +38,35 @@ In our case, the "ball on plate" problem turned out to be "extreme noisy sensors
 The PID controller by itself is enough robust to balnace the ball, had its input be a clear signal.   
 Unfortunately, it is not the case.  
 
-A typical measurment of the touchpad looks like this:
-![Alt text](images/noisy-measurment.png?raw=true "A Noisy Position Signal vs. Time")
-
 In order to reduce this pysical noise we do the following steps:  
-1. Reduce the noise in its pysical source, as much as possible.   
+1. Reduce the noise in its pysical source as much as possible.   
 2. Filter the majority of outliers by thresholding.  
-3. Smoothen the "almost clean" signal using standard filters (e.g IIR/FIR).    
+3. Smoothen the "almost clean" signal using standard filters (e.g IIR).    
 
-So we first double the voltage settling time of the touchpad. 
-We look at the resulting signal, and see that there is still a considerable mass of outliers. 
-The derivative of the position looks like this:  
+So we first double the voltage settling time of the touchpad.  
+We look at the resulting signal, and see that there is still a considerable mass of outliers:  
+![Alt text](images/noisy-measurment.png?raw=true "A Noisy Position Signal vs. Time")  
+
+Based on these samples, the ball's velocity (first derivative of the position) looks like this:  
 ![Alt text](images/x-derivative.png?raw=true,center=true "A Noisy Position Signal vs. Time")  
-No LPF can deal with such garbage, but a simple thresolding can.  
-We compute the distance between consequent samples, and if it is two large we sample again.  
-This trick almost eliminated the noise.  
+This noisy signal confuses the PID controller, which becomes completely crazy.  
+No LPF can deal with such a garbage, but simple thresholding can.  
+
+The trick here is a simple re-sampling. We compute the distance between consequent samples, and if it is too large, we sample again. This almost eliminates the noise:  
 ![Alt text](images/after-resampling.png?raw=true,center=true "A Noisy Position Signal vs. Time")  
 
 The rest of the work can be done by a standard butterworth filter.    
 ![Alt text](images/after-butterworth.png?raw=true,center=true "A Noisy Position Signal vs. Time")  
 
+# Dealing with numerical instabilities
+The inverse kinematics of the stewart platform might be subject to numerical issues.  
+The instability comes from division by small numbers. This prevent us from computing the motor angles using the closed form formula.   
+Following https://github.com/ThomasKNR/RotaryStewartPlatform/blob/master/src_arduino_code/platfo
+rm.ino  
+we fix this issue as follows:  
+We compute the Steart platform leg lengths like they where telescopic legs.  
+Then we use binary search over the motor angles, and minimize the error between the desired leg length, and the actual distance between the motor's joint, and the plate joint.  
 
-Second, 
-
-![Alt text](images/noisy-measurment.png?raw=true "A Noisy Position Signal vs. Time")
 
 
 
