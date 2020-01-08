@@ -59,15 +59,10 @@ The rest of the work can be done by a standard butterworth filter.
 ![Alt text](images/after-butterworth.png?raw=true,center=true "A Noisy Position Signal vs. Time")  
 
 # Dealing with numerical instabilities
-The inverse kinematics of the stewart platform might be subject to numerical issues.  
-The instability comes from division by small numbers. This prevent us from computing the motor angles using the closed form formula.   
-Following https://github.com/ThomasKNR/RotaryStewartPlatform/blob/master/src_arduino_code/platfo
-rm.ino  
+The inverse kinematics of the stewart platform might cause numerical issues.  
+The instability comes from divisions by small numbers.  
+Following https://github.com/ThomasKNR/RotaryStewartPlatform/blob/master/src_arduino_code/platform.ino  
 we fix this issue as follows:  
 We compute the Steart platform leg lengths like they where telescopic legs.  
 Then we use binary search over the motor angles, and minimize the error between the desired leg length, and the actual distance between the motor's joint, and the plate joint.  
-
-
-
-
 
